@@ -1,0 +1,127 @@
+import React, { useState, useEffect } from "react";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+
+export default function Home() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [depositAmount, setDepositAmount] = useState("");
+  const [withdrawAmount, setWithdrawAmount] = useState("");
+  const [balance, setBalance] = useState(100);
+  const usdtAddress = "TP5HhQ42ahwS7EqJMznxXzKm9eGt5wGdCz";
+  const [chatMessages, setChatMessages] = useState([]);
+  const [chatInput, setChatInput] = useState("");
+  const [selectedTime, setSelectedTime] = useState(15);
+  const [referralLink, setReferralLink] = useState("");
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [tickets, setTickets] = useState([]);
+  const [ticketMessage, setTicketMessage] = useState("");
+  const [adminView, setAdminView] = useState(false);
+  const [transactions, setTransactions] = useState([]);
+
+  useEffect(() => {
+    setReferralLink(`https://lamp-exchange.com/ref?user=${email}`);
+  }, [email]);
+  
+  const handleLogin = () => {
+    if (email && password) {
+      setIsLoggedIn(true);
+      alert("Login successful!");
+    }
+  };
+  
+  const handleSignUp = () => {
+    if (email && password) {
+      alert("Account created successfully! Please log in.");
+    }
+  };
+
+  const handleTrade = (direction) => {
+    alert(`Trade placed: ${direction} for ${selectedTime} seconds`);
+  };
+
+  const handleDeposit = async () => {
+    const amount = parseFloat(depositAmount);
+    if (!isNaN(amount) && amount > 0) {
+      setBalance(balance + amount);
+      setTransactions([...transactions, { amount, status: "Pending" }]);
+      alert(`Deposit of ${amount} USDT successful! Awaiting confirmation.`);
+    }
+  };
+
+  const handleWithdraw = () => {
+    const amount = parseFloat(withdrawAmount);
+    if (!isNaN(amount) && amount > 0) {
+      if (amount <= balance) {
+        setBalance(balance - amount);
+        alert(`Withdrawal of ${amount} USDT successful!`);
+      } else {
+        alert("Insufficient balance.");
+      }
+    }
+  };
+
+  const handleSendMessage = () => {
+    if (chatInput.trim()) {
+      setChatMessages([...chatMessages, chatInput]);
+      setChatInput("");
+    }
+  };
+
+  return (
+    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-900 text-white p-4">
+      <Card className="p-6 w-full max-w-lg text-center shadow-lg border border-gray-700">
+        <h1 className="text-3xl font-bold">Welcome to Lamp Exchange</h1>
+        <p className="mt-2 text-gray-400">Trade UP or DOWN and win USDT</p>
+        <p className="mt-2 text-lg font-semibold">Balance: {balance} USDT</p>
+        <div className="mt-4 flex justify-center gap-4">
+          <Button className="bg-green-500 hover:bg-green-600" onClick={() => handleTrade("UP")}>UP</Button>
+          <Button className="bg-red-500 hover:bg-red-600" onClick={() => handleTrade("DOWN")}>DOWN</Button>
+        </div>
+
+        <div className="mt-6">
+          <h2 className="text-xl font-semibold">Sign Up</h2>
+          <Input className="mt-2" placeholder="Email" onChange={(e) => setEmail(e.target.value)} />
+          <Input className="mt-2" type="password" placeholder="Password" onChange={(e) => setPassword(e.target.value)} />
+          <Button className="mt-4 w-full bg-green-500 hover:bg-green-600" onClick={handleSignUp}>Sign Up</Button>
+        </div>
+
+        <div className="mt-6">
+          <h2 className="text-xl font-semibold">Deposit</h2>
+          <Input className="mt-2" placeholder="Amount" onChange={(e) => setDepositAmount(e.target.value)} />
+          <Button className="mt-2 bg-green-500 hover:bg-green-600" onClick={handleDeposit}>Deposit</Button>
+        </div>
+
+        <div className="mt-6">
+          <h2 className="text-xl font-semibold">Withdraw</h2>
+          <Input className="mt-2" placeholder="Amount" onChange={(e) => setWithdrawAmount(e.target.value)} />
+          <Button className="mt-2 bg-red-500 hover:bg-red-600" onClick={handleWithdraw}>Withdraw</Button>
+        </div>
+
+        <div className="mt-6">
+          <h2 className="text-xl font-semibold">Affiliate Program</h2>
+          <p className="text-gray-400">Invite friends and earn rewards.</p>
+          <Input className="mt-2" value={referralLink} readOnly />
+        </div>
+        
+        <div className="mt-6">
+          <h2 className="text-xl font-semibold">Live Chat</h2>
+          <div className="mt-2 h-32 overflow-y-auto bg-gray-800 p-2 rounded">
+            {chatMessages.map((msg, index) => (
+              <p key={index} className="text-gray-300">{msg}</p>
+            ))}
+          </div>
+          <Input className="mt-2" placeholder="Type a message..." value={chatInput} onChange={(e) => setChatInput(e.target.value)} />
+          <Button className="mt-2 bg-blue-500 hover:bg-blue-600" onClick={handleSendMessage}>Send</Button>
+        </div>
+
+        <div className="mt-6">
+          <h2 className="text-xl font-semibold">Admin Panel</h2>
+          <Button className="bg-red-500 hover:bg-red-600" onClick={() => setAdminView(!adminView)}>Toggle Admin View</Button>
+        </div>
+      </Card>
+    </div>
+  );
+}
