@@ -1,2 +1,1 @@
-# lamp-exchange
-lamp-exchang
+This is a trading platform for binary options"
